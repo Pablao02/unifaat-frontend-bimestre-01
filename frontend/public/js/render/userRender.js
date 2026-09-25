@@ -1,10 +1,13 @@
-import deleteButtonClickHandler from "../listeners/deleteButtonClickHandler.js";
-
 export default function userRender(user) {
 
     const liElement = document.createElement("li");
-    liElement.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-    liElement.userId = user.id;
+
+    liElement.classList.add(
+        "list-group-item",
+        "d-flex",
+        "justify-content-between",
+        "align-items-center"
+    );
 
     const infoElement = document.createElement("div");
     infoElement.classList.add("d-flex", "flex-column");
@@ -20,11 +23,20 @@ export default function userRender(user) {
     liElement.append(infoElement);
 
     const buttonDeleteElement = document.createElement("button");
-    buttonDeleteElement.classList.add("btn", "btn-danger", "btn-sm");
+
+    buttonDeleteElement.classList.add(
+        "btn",
+        "btn-danger",
+        "btn-sm"
+    );
+
     buttonDeleteElement.innerText = "Excluir";
-    buttonDeleteElement.addEventListener("click", deleteButtonClickHandler);
+
+    buttonDeleteElement.addEventListener("click", () => {
+        liElement.remove();
+    });
+
     liElement.append(buttonDeleteElement);
 
     return liElement;
-
 }

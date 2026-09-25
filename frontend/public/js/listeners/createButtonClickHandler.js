@@ -1,22 +1,31 @@
-import { userCreateApi } from "../api/userCreateApi.js";
-import listUserRender from "../render/listUserRender.js";
+import { users } from "../render/listUserRender.js";
+import userRender from "../render/userRender.js";
 
-export default async function createButtonClickHandler(event) {
+export default function createButtonClickHandler(event) {
+
     event.preventDefault();
 
     const inputElement = event.currentTarget.parentElement.querySelector("input");
 
-    const email = inputElement.value;
+    const value = inputElement.value.trim();
 
-    const requestBody = {
-        name: email,
-        email: email,
-        password: "123456"
+    if (value === "") {
+        return;
+    }
+
+    const newUser = {
+        id: Date.now(),
+        name: value,
+        email: value
     };
 
-    await userCreateApi(requestBody);
+    users.push(newUser);
+
+    const ulElement = document.querySelector("#list-container ul");
+
+    const liElement = userRender(newUser);
+
+    ulElement.append(liElement);
 
     inputElement.value = "";
-
-    await listUserRender();
 }

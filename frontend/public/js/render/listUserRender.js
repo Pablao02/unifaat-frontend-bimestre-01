@@ -1,25 +1,38 @@
 import userRender from "./userRender.js";
-import { userListApi } from "../api/userListApi.js";
 
-export default async function listUserRender() {
+export const users = [
+    {
+        id: 1,
+        name: "João",
+        email: "joao@email.com"
+    },
+    {
+        id: 2,
+        name: "Maria",
+        email: "maria@email.com"
+    },
+    {
+        id: 3,
+        name: "Pedro",
+        email: "pedro@email.com"
+    }
+];
+
+export default function listUserRender() {
 
     const sectionListElement = document.querySelector("#list-container");
 
-    sectionListElement.innerHTML = "";
+    while (sectionListElement.firstChild) {
+        sectionListElement.firstChild.remove();
+    }
 
     const ulElement = document.createElement("ul");
     ulElement.classList.add("list-group");
 
     sectionListElement.append(ulElement);
 
-    const { data: users } = await userListApi();
-
-    ulElement.innerHTML = "";
-
     users.forEach((user) => {
         const liElement = userRender(user);
-
         ulElement.append(liElement);
     });
-
 }

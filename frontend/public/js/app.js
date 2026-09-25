@@ -1,15 +1,11 @@
-
 import listUserRender from "./render/listUserRender.js";
 import createButtonClickHandler from "./listeners/createButtonClickHandler.js";
 
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", () => {
 
-    try {
-        await listUserRender();
-    } catch (error) {
-        console.error("Falha ao carregar usuários:", error);
-    }
+    listUserRender();
 
-    document.querySelector("#add-section > button").addEventListener("click", createButtonClickHandler);
-
+    document
+        .querySelector("#add-section > button")
+        .addEventListener("click", createButtonClickHandler);
 });
