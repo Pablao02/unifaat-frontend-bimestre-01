@@ -1,3 +1,5 @@
+import editNameClickHandler from "../listeners/editNameClickHandler.js";
+
 export default function userRender(user) {
 
     const liElement = document.createElement("li");
@@ -37,6 +39,8 @@ export default function userRender(user) {
     });
 
     liElement.append(buttonDeleteElement);
+
+    liElement.addEventListener("click", editNameClickHandler);
 
     return liElement;
 }
