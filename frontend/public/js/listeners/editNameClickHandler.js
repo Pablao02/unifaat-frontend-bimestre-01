@@ -1,73 +1,106 @@
+import { userUpdateApi } from "../api/userUpdateApi.js";
+import listUserRender from "../render/listUserRender.js";
+
 export default function editNameClickHandler(event) {
 
-    const liElement = event.currentTarget;
+    const liElement = event.currentTarget.parentElement.parentElement;
+    const userId = liElement.dataset.userId;
 
-    if (event.target.tagName !== "SPAN") {
-        return;
-    }
+    const infoElement = liElement.querySelector("div");
 
-    const nameElement = liElement.querySelector("span");
+    const nameElement = infoElement.querySelector("span");
+    const emailElement = infoElement.querySelector("small");
 
-    if (!nameElement) {
+    if (!nameElement || !emailElement) {
         return;
     }
 
     const oldName = nameElement.innerText;
+    const oldEmail = emailElement.innerText;
 
-    const inputElement = document.createElement("input");
-    inputElement.setAttribute("type", "text");
-    inputElement.setAttribute("value", oldName);
-    inputElement.classList.add("form-control", "form-control-sm");
+    const nameInputElement = document.createElement("input");
+    nameInputElement.type = "text";
+    nameInputElement.value = oldName;
+    nameInputElement.classList.add("form-control", "form-control-sm", "mb-1");
 
-    const buttonAlterElement = document.createElement("button");
-    buttonAlterElement.setAttribute("type", "button");
-    buttonAlterElement.classList.add("btn", "btn-primary", "btn-sm");
-    buttonAlterElement.innerText = "Alterar";
+    const emailInputElement = document.createElement("input");
+    emailInputElement.type = "email";
+    emailInputElement.value = oldEmail;
+    emailInputElement.classList.add("form-control", "form-control-sm");
 
-    const buttonDeleteElement = liElement.querySelector(".btn-danger");
+    const buttonsElement = liElement.querySelector("div:last-child");
+
+    const buttonSaveElement = document.createElement("button");
+    buttonSaveElement.type = "button";
+    buttonSaveElement.classList.add("btn", "btn-success", "btn-sm");
+    buttonSaveElement.innerText = "Salvar";
+
+    const buttonCancelElement = document.createElement("button");
+    buttonCancelElement.type = "button";
+    buttonCancelElement.classList.add("btn", "btn-secondary", "btn-sm");
+    buttonCancelElement.innerText = "Cancelar";
 
     nameElement.remove();
+    emailElement.remove();
 
-    if (buttonDeleteElement) {
-        buttonDeleteElement.remove();
-    }
+    infoElement.prepend(
+        emailInputElement
+    );
 
-    liElement.querySelector("div").prepend(inputElement, buttonAlterElement);
+    infoElement.prepend(
+        nameInputElement
+    );
 
-    function confirmEdit() {
+    buttonsElement.innerHTML = "";
 
-        const newName = inputElement.value.trim();
+    buttonsElement.append(
+        buttonSaveElement,
+        buttonCancelElement
+    );
 
-        if (newName === "") {
-            inputElement.focus();
+    async function saveEdit() {
+
+        const newName = nameInputElement.value.trim();
+        const newEmail = emailInputElement.value.trim();
+
+        if (newName === "" || newEmail === "") {
+            alert("Nome e e-mail não podem ficar vazios.");
             return;
         }
 
-        const newNameElement = document.createElement("span");
-        newNameElement.innerText = newName;
+        buttonSaveElement.disabled = true;
+        buttonCancelElement.disabled = true;
 
-        inputElement.remove();
-        buttonAlterElement.remove();
+        try {
+            await userUpdateApi(userId, {
+                name: newName,
+                email: newEmail
+            });
 
-        liElement.querySelector("div").prepend(newNameElement);
+            const currentPage = document.querySelector(
+                "#list-container"
+            ).dataset.currentPage || 1;
 
-        if (buttonDeleteElement) {
-            liElement.append(buttonDeleteElement);
+            await listUserRender(Number(currentPage));
+
+        } catch (error) {
+            console.error(error);
+            alert("Não foi possível atualizar o usuário.");
+
+            buttonSaveElement.disabled = false;
+            buttonCancelElement.disabled = false;
         }
     }
 
-    buttonAlterElement.addEventListener("click", (event) => {
-        event.stopPropagation();
-        confirmEdit();
+    buttonSaveElement.addEventListener("click", saveEdit);
+
+    buttonCancelElement.addEventListener("click", () => {
+        listUserRender(
+            Number(
+                document.querySelector("#list-container").dataset.currentPage || 1
+            )
+        );
     });
 
-    inputElement.addEventListener("keydown", (event) => {
-
-        if (event.key === "Enter") {
-            confirmEdit();
-        }
-
-    });
-
-    inputElement.focus();
+    nameInputElement.focus();
 }

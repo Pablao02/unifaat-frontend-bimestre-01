@@ -11,6 +11,8 @@ export default function userRender(user) {
         "align-items-center"
     );
 
+    liElement.dataset.userId = user.id;
+
     const infoElement = document.createElement("div");
     infoElement.classList.add("d-flex", "flex-column");
 
@@ -24,8 +26,28 @@ export default function userRender(user) {
     infoElement.append(nameElement, emailElement);
     liElement.append(infoElement);
 
+    const buttonsElement = document.createElement("div");
+    buttonsElement.classList.add("d-flex", "gap-2");
+
+    const buttonEditElement = document.createElement("button");
+
+    buttonEditElement.type = "button";
+    buttonEditElement.classList.add(
+        "btn",
+        "btn-warning",
+        "btn-sm"
+    );
+
+    buttonEditElement.innerText = "Editar";
+
+    buttonEditElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+        editNameClickHandler(event);
+    });
+
     const buttonDeleteElement = document.createElement("button");
 
+    buttonDeleteElement.type = "button";
     buttonDeleteElement.classList.add(
         "btn",
         "btn-danger",
@@ -34,13 +56,17 @@ export default function userRender(user) {
 
     buttonDeleteElement.innerText = "Excluir";
 
-    buttonDeleteElement.addEventListener("click", () => {
+    buttonDeleteElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         liElement.remove();
     });
 
-    liElement.append(buttonDeleteElement);
+    buttonsElement.append(
+        buttonEditElement,
+        buttonDeleteElement
+    );
 
-    liElement.addEventListener("click", editNameClickHandler);
+    liElement.append(buttonsElement);
 
     return liElement;
 }

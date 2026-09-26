@@ -1,7 +1,7 @@
-import { users } from "../render/listUserRender.js";
-import userRender from "../render/userRender.js";
+import { userCreateApi } from "../api/userCreateApi.js";
+import listUserRender from "../render/listUserRender.js";
 
-export default function createButtonClickHandler(event) {
+export default async function createButtonClickHandler(event) {
 
     event.preventDefault();
 
@@ -13,19 +13,22 @@ export default function createButtonClickHandler(event) {
         return;
     }
 
-    const newUser = {
-        id: Date.now(),
-        name: value,
-        email: value
-    };
+    try {
 
-    users.push(newUser);
+        await userCreateApi({
+            name: value,
+            email: value
+        });
 
-    const ulElement = document.querySelector("#list-container ul");
+        await listUserRender();
 
-    const liElement = userRender(newUser);
+        inputElement.value = "";
 
-    ulElement.append(liElement);
+    } catch (error) {
 
-    inputElement.value = "";
+        console.error(error);
+
+        alert("Não foi possível criar o usuário.");
+
+    }
 }
