@@ -13,7 +13,7 @@ export default async function taskDeleteHandler(event) {
     }
 
     try {
-        await taskDeleteApi(idUser, taskId);
+        await taskDeleteApi(taskId);
         await tasksListRender(idUser);
     } catch (error) {
         alert("Erro ao excluir tarefa");

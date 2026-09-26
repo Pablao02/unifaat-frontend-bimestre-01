@@ -8,7 +8,7 @@ export default async function taskToggleHandler(event) {
     const isDone = event.target.checked;
 
     try {
-        await taskUpdateApi(idUser, taskId, { is_done: isDone });
+        await taskUpdateApi(taskId, { is_done: isDone });
         await tasksListRender(idUser);
     } catch (error) {
         alert("Erro ao atualizar tarefa");
